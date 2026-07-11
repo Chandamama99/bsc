@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SADC - Department Event 2026</title>
+    <!-- Heavy Confetti Library for Grand Ribbon Blast -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-blue: #0284c7;
+            --border-color: #cbd5e1;
+            --ribbon-pink: #ff0055;
+            --ribbon-cyan: #00f0ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+        
+        body { 
+            background-color: #e2e8f0; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Pure Mobile Focused Layout */
+        .mobile-layout {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            position: relative;
+            background: var(--bg-light);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* --- First Interface: Only Computer Shape with ACCESS Button --- */
+        #event-gate {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: #0f172a;
+            transition: all 0.6s cubic-bezier(0.1, 1, 0.1, 1);
+            padding: 20px;
+        }
+
+        /* Minimalist Computer Monitor Design (No Text) */
+        .computer-monitor {
+            width: 85%;
+            aspect-ratio: 4 / 3;
+            background: #1e293b;
+            border: 10px solid #334155;
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+        }
+        /* Computer Stand */
+        .computer-stand {
+            width: 40px;
+            height: 30px;
+            background: #334155;
+            position: absolute;
+            bottom: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* Computer Base */
+        .computer-base {
+            width: 100px;
+            height: 8px;
+            background: #475569;
+            position: absolute;
+            bottom: -46px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+        }
+
+        /* Glowing Laser Ribbon Wire running across the screen */
+        .laser-ribbon-line {
+            position: absolute; top: 50%; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--ribbon-pink), var(--ribbon-cyan), var(--ribbon-pink));
+            box-shadow: 0 0 15px var(--ribbon-pink), 0 0 25px var(--ribbon-cyan);
+            z-index: 1001;
+            transition: scaleX 0.5s ease;
+        }
+
+        /* Plain Clean Access Button inside Computer */
+        .access-btn {
+            z-index: 1005; background: #ffffff;
+            color: #0f172a; border: none;
+            padding: 12px 35px; font-size: 1rem; font-weight: bold;
+            border-radius: 30px; cursor: pointer; letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            transition: transform 0.2s;
+        }
+        .access-btn:active { transform: scale(0.95); }
+
+        /* Trigger Actions */
+        .gate-opened #event-gate { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .gate-opened .laser-ribbon-line { transform: scaleX(0); }
+
+        /* --- Light-weight Main Content Dashboard --- */
+        #main-content {
+            width: 100%; height: 100%; overflow-y: auto;
+            padding: 20px; position: relative; z-index: 5;
+            display: none;
+        }
+        .gate-opened #main-content { display: block; }
+
+        /* Simple Clean Header */
+        header {
+            text-align: center; padding: 20px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        header h1 { font-size: 1.4rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+        header p { font-size: 0.85rem; color: var(--accent-blue); margin-top: 6px; font-weight: 600; }
+        
+        .principal-box {
+            margin-top: 12px; display: inline-block; background: #f1f5f9;
+            padding: 4px 12px; border-radius: 6px; font-size: 0.8rem;
+            color: var(--text-muted); border: 1px solid var(--border-color);
+        }
+
+        /* Big & Clear Countdown Timer */
+        .timer-section { margin: 20px 0; }
+        .clear-timer {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            background: #ffffff; padding: 15px 10px; border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .t-node { text-align: center; }
+        .t-val { font-size: 1.8rem; font-weight: 700; color: var(--text-main); display: block; }
+        .t-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+        /* Plain Simple Section Headings */
+        .section-title {
+            font-size: 1rem; font-weight: 700; color: var(--text-main);
+            margin: 25px 0 15px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* Competitions Grid */
+        .grid-events { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .event-card {
+            background: #ffffff; padding: 20px 10px; border-radius: 10px; text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .event-icon { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+        .event-card h3 { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+
+        /* Organizers List */
+        .unit-card {
+            background: #ffffff; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .unit-card h4 { font-size: 0.85rem; color: var(--text-main); font-weight: 600; }
+        .unit-card p { font-size: 0.8rem; color: var(--text-muted); }
+        .unit-card b { color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-layout">
+
+        <!-- --- First Interface --- -->
+        <div id="event-gate">
+            <!-- Plain Computer Graphic Container -->
+            <div class="computer-monitor">
+                
+                <!-- Glowing Digital Ribbon Wire inside the computer -->
+                <div class="laser-ribbon-line"></div>
+                
+                <!-- Requested ACCESS button -->
+                <button class="access-btn" id="access-trigger">ACCESS</button>
+                
+                <!-- Computer Stands Elements -->
+                <div class="computer-stand"></div>
+                <div class="computer-base"></div>
+            </div>
+        </div>
+
+        <!-- --- Light-weight Main Dashboard --- -->
+        <div id="main-content">
+            <header>
+                <h1>Sri Aditya<br>Degree College</h1>
+                <p>Computer Science & Data Science Internal Event</p>
+                <div class="principal-box">Principal: <b>Anuradha Nagasuri</b></div>
+            </header>
+
+            <!-- Big Clear Countdown Timer Panel -->
+            <section class="timer-section">
+                <div class="clear-timer">
+                    <div class="t-node"><span class="t-val" id="days">00</span><span class="t-lbl">Days</span></div>
+                    <div class="t-node"><span class="t-val" id="hours">00</span><span class="t-lbl">Hours</span></div>
+                    <div class="t-node"><span class="t-val" id="mins">00</span><span class="t-lbl">Mins</span></div>
+                    <div class="t-node"><span class="t-val" id="secs">00</span><span class="t-lbl">Secs</span></div>
+                </div>
+            </section>
+
+            <!-- Event Competitions Layout -->
+            <h2 class="section-title">Event Competitions</h2>
+            <div class="grid-events">
+                <div class="event-card">
+                    <span class="event-icon">🧠</span>
+                    <h3>Quiz Module</h3>
+                </div>
+                <div class="event-card">
+                    <span class="event-icon">📊</span>
+                    <h3>PPT Presentation</h3>
+                </div>
+                <div class="event-card">
+                    <span class="event-icon">🎨</span>
+                    <h3>Poster Display</h3>
+                </div>
+                <div class="event-card">
+                    <span class="event-icon">✨</span>
+                    <h3>Special Talent</h3>
+                </div>
+            </div>
+
+            <!-- Management Module -->
+            <h2 class="section-title">Organizing Units</h2>
+            <div class="unit-list">
+                <div class="unit-card">
+                    <h4>3rd Year B.Sc (CS)</h4>
+                    <p>Incharge: <b>Lakshmikanth</b></p>
+                </div>
+                <div class="unit-card">
+                    <h4>3rd Year B.Sc (DS)</h4>
+                    <p>Incharge: <b>Jyothi</b></p>
+                </div>
+                <div class="unit-card">
+                    <h4>2nd Year B.Sc (DS)</h4>
+                    <p>Incharge: <b>Shankar Anandam</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Gate Access & Heavy Color Ribbon Explosion ---
+        document.getElementById('access-trigger').addEventListener('click', function() {
+            document.querySelector('.mobile-layout').classList.add('gate-opened');
+            document.body.style.overflowY = 'auto';
+
+            // Super Heavy Full-Screen Colorful Ribbon Blast Celebration
+            var duration = 4 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+              // Left Side Blast
+              confetti({ particleCount: 8, angle: 60, spread: 65, origin: { x: 0, y: 0.6 } });
+              // Right Side Blast
+              confetti({ particleCount: 8, angle: 120, spread: 65, origin: { x: 1, y: 0.6 } });
+              // Center Sky Shower
+              confetti({ particleCount: 4, angle: 90, spread: 80, origin: { x: 0.5, y: 0.3 } });
+
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+        });
+
+        // --- Clear Live Countdown Timer (Target: 17th) ---
+        function runEventTimer() {
+            const now = new Date();
+            let target = new Date(now.getFullYear(), now.getMonth(), 17, 9, 0, 0);
+            
+            if (target < now) {
+                target = new Date(now.getFullYear(), now.getMonth() + 1, 17, 9, 0, 0);
+            }
+
+            const diff = target - now;
+
+            if (diff <= 0) {
+                document.querySelector(".clear-timer").innerHTML = "<div style='color:var(--accent-blue); width:100%; text-align:center; font-weight:bold; font-size:1.1rem;'>EVENT STARTED (LIVE)</div>";
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = d < 10 ? "0" + d : d;
+            document.getElementById("hours").innerHTML = h < 10 ? "0" + h : h;
+            document.getElementById("mins").innerHTML = m < 10 ? "0" + m : m;
+            document.getElementById("secs").innerHTML = s < 10 ? "0" + s : s;
+        }
+
+        setInterval(runEventTimer, 1000);
+        runEventTimer();
+    </script>
+</body>
+</html>
